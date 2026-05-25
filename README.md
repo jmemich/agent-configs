@@ -43,17 +43,21 @@ decide what to change and re-invoke. Run state lives in `.build-skill/` in the t
 
 ## Deployment
 
-Not yet wired (TODO). The intended `bootstrap.sh` scheme:
+Wired through [`dotfiles`](https://github.com/jmemich/dotfiles), where this repo is a
+submodule at `agent-configs/`. Running `bootstrap.sh` symlinks the skills into place:
 
 ```sh
-# Claude Code reads skills from ~/.claude/skills/<name>/SKILL.md
+# Claude Code reads skills from ~/.claude/skills/<name>/SKILL.md — link the whole dir.
 ln -sfn "$DOTFILES/agent-configs/skills" "$HOME/.claude/skills"
 
-# Cursor reads commands from ~/.cursor/commands/<name>.md — one link per skill
+# Cursor reads commands from ~/.cursor/commands/<name>.md — one link per skill.
 for skill in "$DOTFILES/agent-configs/skills"/*/; do
     name="$(basename "$skill")"
     ln -sfn "$skill/SKILL.md" "$HOME/.cursor/commands/$name.md"
 done
 ```
 
-`git worktree` (used by `/build`) is built into git — nothing extra to install.
+Linking the whole `skills/` dir for Claude means new skills are picked up automatically;
+Cursor needs one link per skill, so `bootstrap.sh` loops. `git worktree` (used by `/build`)
+is built into git — nothing extra to install, though the Brewfile pins a current `git`
+since macOS ships an older Apple Git.
