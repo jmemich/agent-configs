@@ -2,7 +2,7 @@
 
 A cross-tool collection of skills, rules, and configuration for AI coding agents
 (Claude Code, Cursor, …). Intended to be used as a submodule of [`dotfiles`](https://github.com/jmemich/dotfiles),
-where `bootstrap.sh` symlinks the relevant pieces into place so the same skills are
+where `setup.sh` symlinks the relevant pieces into place so the same skills are
 available on any machine and in any project.
 
 ## Layout
@@ -44,7 +44,7 @@ decide what to change and re-invoke. Run state lives in `.build-skill/` in the t
 ## Deployment
 
 Wired through [`dotfiles`](https://github.com/jmemich/dotfiles), where this repo is a
-submodule at `agent-configs/`. Running `bootstrap.sh` symlinks the skills into place:
+submodule at `agent-configs/`. Running `setup.sh` symlinks the skills into place:
 
 ```sh
 # Claude Code reads skills from ~/.claude/skills/<name>/SKILL.md — link the whole dir.
@@ -58,6 +58,6 @@ done
 ```
 
 Linking the whole `skills/` dir for Claude means new skills are picked up automatically;
-Cursor needs one link per skill, so `bootstrap.sh` loops. `git worktree` (used by `/build`)
+Cursor needs one link per skill, so `setup.sh` loops. `git worktree` (used by `/build`)
 is built into git — nothing extra to install, though the Brewfile pins a current `git`
 since macOS ships an older Apple Git.
