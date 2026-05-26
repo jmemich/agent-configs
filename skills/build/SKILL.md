@@ -88,6 +88,12 @@ they can sync to it. Write `.build-skill/contract.md` from the template below. K
 unit **small** — if the request is large, scope this pass to one coherent slice and record
 the rest under "Out of scope". A small contract that iterates beats one heroic pass.
 
+**API verification rule.** If the contract includes concrete API signatures, method names, or return values for any external library, you must verify them against the installed version before writing. Do not rely on training knowledge for version-sensitive or thinly-documented libraries. Run a quick smoke test in the shell:
+```bash
+python3 -c "import somelib; print(somelib.SomeClass().some_method(...))"
+```
+If the output is surprising, investigate before specifying. A wrong API claim in the contract propagates silently through builder and tester — the contract is the single point of failure for the entire pipeline. Well-known stable APIs (numpy, scipy stdlib) are low-risk; newer wrappers, C-extension bindings, and anything with a version-specific changelog entry are high-risk and must be verified.
+
 **3. Write the airgapped specs.** Pick **non-overlapping** write surfaces (e.g. builder →
 `src/...`, tester → `tests/...`). Write `agents/builder/spec.md` and `agents/tester/spec.md`
 from the templates. The builder spec carries the contract slice but **no test detail**; the
