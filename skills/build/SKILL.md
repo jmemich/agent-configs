@@ -82,10 +82,11 @@ Then create the `.build-skill/` tree above.
 
 **2. Author the contract.** Explore the repo read-only to learn its conventions: language,
 where source and tests live, and the **test command** (e.g. `pytest`, `npm test`,
-`cargo test`, `go test ./...`, a `Makefile` target). Write `.build-skill/contract.md` from
-the template below. Keep the unit **small** — if the request is large, scope this pass to
-one coherent slice and record the rest under "Out of scope". A small contract that
-iterates beats one heroic pass.
+`cargo test`, `go test ./...`, a `Makefile` target). Also capture the current working
+branch with `git rev-parse --abbrev-ref HEAD` — you will embed it in both agent specs so
+they can sync to it. Write `.build-skill/contract.md` from the template below. Keep the
+unit **small** — if the request is large, scope this pass to one coherent slice and record
+the rest under "Out of scope". A small contract that iterates beats one heroic pass.
 
 **3. Write the airgapped specs.** Pick **non-overlapping** write surfaces (e.g. builder →
 `src/...`, tester → `tests/...`). Write `agents/builder/spec.md` and `agents/tester/spec.md`
@@ -165,7 +166,13 @@ the code will still import and exercise it.>
 You are the **builder**. Implement code that satisfies the contract below. You have no
 tests and must not go looking for any — write code to satisfy the spec, not to pass tests.
 
+## Base branch
+<current working branch — run `git merge <base-branch>` as your very first action>
+
 ## Rules
+- **Branch sync (first action):** Your worktree is checked out from the repo default
+  branch, not the current working branch. Before doing anything else, run
+  `git merge <base-branch>` to incorporate all work from that branch.
 - Read ONLY this file. Do not read test files or any other agent's folder.
 - Write ONLY within the write surface below.
 - `git add` + `git commit` your work before you finish — uncommitted changes in your
@@ -195,7 +202,13 @@ decisions, assumptions made, and a "## Blocked" section if applicable.
 You are the **tester**. Write tests that verify the contract below. You are deliberately
 blind to the implementation: write tests against the contract, not against any code.
 
+## Base branch
+<current working branch — run `git merge <base-branch>` as your very first action>
+
 ## Rules
+- **Branch sync (first action):** Your worktree is checked out from the repo default
+  branch, not the current working branch. Before doing anything else, run
+  `git merge <base-branch>` to incorporate all work from that branch.
 - Read ONLY this file. Do NOT read the implementation (e.g. src/), and do NOT run the tests.
 - Write ONLY within the write surface below.
 - Tests must import and exercise the interface exactly as the contract declares it.
