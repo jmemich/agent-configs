@@ -10,8 +10,6 @@ AGENTS.md / CLAUDE.md.
   product work (decks, docs, spreadsheets).
 - Domain expert directing the work, not a SWE auditing patterns. Skip
   foundational explanations. Speak peer-to-peer.
-- Comfortable in terminal, tmux, vim. Not a beginner being introduced
-  to them.
 
 ## Pace
 
