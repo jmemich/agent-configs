@@ -9,18 +9,20 @@ available on any machine and in any project.
 
 ```
 agent-configs/
-├── skills/                 # agent-neutral skills — the shared source of truth
+├── AGENTS.md               # global collaboration rules — source of truth, tool-neutral
+├── CLAUDE.md               # one-line `@./AGENTS.md` shim for Claude Code's loader
+├── setup.sh                # idempotent: symlinks rules + skills into ~/.claude and ~/.cursor
+├── skills/                 # agent-neutral skills
 │   └── build/SKILL.md      # /build — orchestrated, airgapped build pipeline
-├── claude/                 # Claude-specific config that ISN'T a portable skill (lazy)
-├── cursor/                 # Cursor-specific config: .mdc rules, etc. (lazy)
 └── README.md
 ```
 
+`AGENTS.md` is the canonical source of truth — tool-neutral, cross-agent. `CLAUDE.md`
+is a one-line shim that imports it, so Claude Code's `~/.claude/CLAUDE.md` loader picks
+up the same content regardless of how AGENTS.md support shifts in any single tool.
+
 A skill is the unit of reuse. Each lives at `skills/<name>/SKILL.md` and is written to be
-agent-neutral: the body is plain markdown that any capable agent can follow. Tool-specific
-config that *isn't* a portable skill (Claude `settings.json`/agents, Cursor `.mdc` rules)
-goes under `claude/` or `cursor/`; those folders are created when there's something to put
-in them.
+agent-neutral: the body is plain markdown that any capable agent can follow.
 
 ## Skills
 
@@ -43,21 +45,18 @@ decide what to change and re-invoke. Run state lives in `.build-skill/` in the t
 
 ## Deployment
 
-Wired through [`dotfiles`](https://github.com/jmemich/dotfiles), where this repo is a
-submodule at `agent-configs/`. Running `setup.sh` symlinks the skills into place:
+This repo owns its own deployment. Run `./setup.sh` to create:
 
-```sh
-# Claude Code reads skills from ~/.claude/skills/<name>/SKILL.md — link the whole dir.
-ln -sfn "$DOTFILES/agent-configs/skills" "$HOME/.claude/skills"
+- `~/.claude/CLAUDE.md` → `CLAUDE.md` (the shim)
+- `~/.claude/AGENTS.md` → `AGENTS.md`
+- `~/.claude/skills` → `skills/` (whole dir; new skills picked up automatically)
+- `~/.cursor/commands/<name>.md` → `skills/<name>/SKILL.md` (one link per skill)
 
-# Cursor reads commands from ~/.cursor/commands/<name>.md — one link per skill.
-for skill in "$DOTFILES/agent-configs/skills"/*/; do
-    name="$(basename "$skill")"
-    ln -sfn "$skill/SKILL.md" "$HOME/.cursor/commands/$name.md"
-done
-```
+The script is idempotent and self-locating. Run it here directly, or let
+[`dotfiles/setup.sh`](https://github.com/jmemich/dotfiles) invoke it (this repo is
+wired as a submodule at `agent-configs/` in dotfiles).
 
-Linking the whole `skills/` dir for Claude means new skills are picked up automatically;
-Cursor needs one link per skill, so `setup.sh` loops. `git worktree` (used by `/build`)
-is built into git — nothing extra to install, though the Brewfile pins a current `git`
-since macOS ships an older Apple Git.
+**Cursor User Rules note.** Cursor has no global `AGENTS.md` file location — its
+global rules live in *Settings → Rules*. To apply these rules in Cursor globally,
+paste `AGENTS.md`'s contents into that UI once per machine; re-paste after edits.
+Per-project use of `AGENTS.md` in a repo's root is read by Cursor normally.
