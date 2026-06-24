@@ -60,6 +60,15 @@ AGENTS.md / CLAUDE.md.
   with equations and symbol tables, cited back to canonical sources.
   Docstrings are for one-liners.
 
+## External services & rate limits
+
+- **Respect API rate limits; never tight-loop poll.** The GitHub REST
+  API allows only **60 requests/hour** unauthenticated (per IP) vs
+  **5,000/hour** authenticated. Use the `gh` CLI or a token so calls
+  count against the higher limit, and space out polling — back off on
+  an interval, don't busy-wait. A loop that re-hits an endpoint every
+  few seconds will exhaust 60/hr in minutes.
+
 ## Repo hygiene
 
 - **No premature wiring.** No `.gitmodules` for repos that don't
