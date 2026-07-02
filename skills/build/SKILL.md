@@ -1,7 +1,6 @@
 ---
 name: build
-description: Run a software task through an airgapped orchestrator → (builder ∥ tester) → validator pipeline. The orchestrator authors an interface contract, an isolated builder and tester work from sliced specs (so no teaching-to-the-test), and an adversarial validator runs the tests and judges the result against the original request. Single pass — you gate iteration by re-invoking. Invoke as /build with a prompt or a path to a spec file.
-disable-model-invocation: true
+description: Run a software task through an airgapped orchestrator → (builder ∥ tester) → validator pipeline. The orchestrator authors an interface contract, an isolated builder and tester work from sliced specs (so no teaching-to-the-test), and an adversarial validator runs the tests and judges the result against the original request. Single pass — you gate iteration by re-invoking. Use only when the user explicitly invokes /build with a prompt or a path to a spec file — never auto-invoke from ambient context.
 ---
 
 # /build — orchestrated, airgapped build

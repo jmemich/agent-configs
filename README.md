@@ -13,7 +13,8 @@ agent-configs/
 ├── CLAUDE.md               # one-line `@./AGENTS.md` shim for Claude Code's loader
 ├── setup.sh                # idempotent: symlinks rules + skills into ~/.claude and ~/.cursor
 ├── skills/                 # agent-neutral skills
-│   └── build/SKILL.md      # /build — orchestrated, airgapped build pipeline
+│   ├── build/SKILL.md      # /build — orchestrated, airgapped build pipeline
+│   └── compress/SKILL.md   # /compress — prune prose to the code's intelligible surface
 └── README.md
 ```
 
@@ -43,14 +44,34 @@ test". `/build` runs a **single pass** and reports a verdict plus recommended fi
 decide what to change and re-invoke. Run state lives in `.build-skill/` in the target repo
 (git-ignored). See [`skills/build/SKILL.md`](skills/build/SKILL.md) for the full protocol.
 
+### `/compress`
+
+Prunes bloated prose — Markdown docs and code comments — back to a codebase's *mutually
+intelligible surface*, on the principle (see `AGENTS.md`) that **code is the source of
+truth and prose is a cache of what code can't say.** A read-only **cartographer** sub-agent
+reads the *code alone* and regenerates the minimal doc-surface it implies — blind to the
+existing docs so it can't inherit their bloat. The orchestrator then diffs that against the
+prose that exists and classifies every unit:
+
+- **redundant** (restates the code) → prune, unless it's a synthesis expensive for a *human* to reconstruct,
+- **orthogonal** (a genuine *why* the code can't confirm) → keep,
+- **stale** (contradicts the code) → cut,
+- **missing** (implied by code, absent from docs) → flag, don't auto-write.
+
+Code semantics are never modified. Changes land on a `compress/<area>` branch as a
+reviewable diff, salvaged "why we did it" narrative goes into the commit body (git as the
+cold store), and it runs a **single pass** — *you* review the branch and decide what to
+keep. See [`skills/compress/SKILL.md`](skills/compress/SKILL.md).
+
 ## Deployment
 
 This repo owns its own deployment. Run `./setup.sh` to create:
 
+- `~/AGENTS.md` → `AGENTS.md` and `~/CLAUDE.md` → `CLAUDE.md` (home-root, for agents that read `$HOME` directly)
 - `~/.claude/CLAUDE.md` → `CLAUDE.md` (the shim)
 - `~/.claude/AGENTS.md` → `AGENTS.md`
 - `~/.claude/skills` → `skills/` (whole dir; new skills picked up automatically)
-- `~/.cursor/commands/<name>.md` → `skills/<name>/SKILL.md` (one link per skill)
+- `~/.cursor/skills` → `skills/` (whole tree; same layout as Claude)
 
 The script is idempotent and self-locating. Run it here directly, or let
 [`dotfiles/setup.sh`](https://github.com/jmemich/dotfiles) invoke it (this repo is

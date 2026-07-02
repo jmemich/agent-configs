@@ -35,20 +35,40 @@ link AGENTS.md   .claude/AGENTS.md
 link skills      .claude/skills
 
 # ----------------------------------------------------------------------------
-# Cursor: per-skill commands
+# Home root: AGENTS.md + CLAUDE.md at ~ (for agents that read $HOME directly)
 # ----------------------------------------------------------------------------
-# Cursor reads slash commands from ~/.cursor/commands/<name>.md — one link
-# per skill. Cursor has no global AGENTS.md location; its global rules live
-# in Settings → Rules (paste AGENTS.md contents manually if you want them).
-if [[ -d "$REPO_DIR/skills" ]]; then
-    mkdir -p "$HOME/.cursor/commands"
-    for skill in "$REPO_DIR/skills"/*/; do
-        name="$(basename "$skill")"
-        if [[ -f "$skill/SKILL.md" ]]; then
-            ln -sfn "$skill/SKILL.md" "$HOME/.cursor/commands/$name.md"
-            log "Linked ~/.cursor/commands/$name.md -> agent-configs/skills/$name/SKILL.md"
-        fi
+link AGENTS.md   AGENTS.md
+link CLAUDE.md   CLAUDE.md
+
+# ----------------------------------------------------------------------------
+# Cursor: Agent Skills (same tree as Claude)
+# ----------------------------------------------------------------------------
+# Cursor discovers user skills under ~/.cursor/skills/<name>/SKILL.md (and
+# mirrors .agents/skills). Link the whole skills/ tree — same as ~/.claude/skills.
+#
+# Do NOT symlink individual skill dirs or command .md files: Cursor's scanner
+# skips symlinked paths ("Refusing to read symlink") and they won't appear in /.
+# Cursor has no global AGENTS.md location; global rules live in Settings → Rules.
+
+# Legacy: remove per-skill command symlinks from an older setup layout.
+if [[ -d "$HOME/.cursor/commands" ]]; then
+    for cmd in "$HOME/.cursor/commands"/*.md; do
+        [[ -L "$cmd" ]] || continue
+        rm -f "$cmd"
+        log "Removed legacy command symlink $(basename "$cmd")"
     done
+    rmdir "$HOME/.cursor/commands" 2>/dev/null || true
 fi
+# Legacy: per-skill dir symlinks under ~/.cursor/skills/<name> (not the whole tree).
+if [[ -d "$HOME/.cursor/skills" && ! -L "$HOME/.cursor/skills" ]]; then
+    for skill_link in "$HOME/.cursor/skills"/*; do
+        [[ -L "$skill_link" ]] || continue
+        rm -f "$skill_link"
+        log "Removed legacy skill symlink $(basename "$skill_link")"
+    done
+    rmdir "$HOME/.cursor/skills" 2>/dev/null || true
+fi
+
+link skills .cursor/skills
 
 log "agent-configs setup complete."

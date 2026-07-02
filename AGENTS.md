@@ -69,6 +69,32 @@ AGENTS.md / CLAUDE.md.
   an interval, don't busy-wait. A loop that re-hits an endpoint every
   few seconds will exhaust 60/hr in minutes.
 
+## Mutual intelligibility (write for the human cache)
+
+The on-disk artifact is a cache of *human* understanding; code is the
+source of truth behind it. Optimize the surface a human must hold — a
+stance to apply at every step, not a rule to check.
+
+- **Code says it → prose doesn't repeat it.** Don't write a doc or
+  comment that restates what the code already states plainly.
+  Regenerable context is not worth caching.
+- **Prose earns its place only by holding what code can't** — the
+  *why*, external constraints, and synthesis a reader can't cheaply
+  reconstruct from the code. Everything else is prunable.
+- **Happy path by default.** Solve the expected case directly. Add
+  defensive branches, edge cases, and their tests only for failures
+  probable in *this* system, or when I ask — not for what merely
+  *could* go wrong.
+- **Discovery goes to the commit.** Keep the path-not-taken —
+  alternatives weighed, history, "we tried X" — out of comments and
+  reference docs. Co-locate it with the work in the commit message.
+- **Scope over size; route over accrete.** Keep each doc to a single
+  purpose a reader can hold at once. When a doc outgrows its purpose,
+  split and link it from an index rather than letting it sprawl.
+- **Prune as you pass.** When prose you touch is stale or redundant
+  against the code, cut it then. Deleting dead prose is a
+  contribution, not a risk.
+
 ## Repo hygiene
 
 - **No premature wiring.** No `.gitmodules` for repos that don't
