@@ -1,6 +1,24 @@
 ---
 name: ds-validation
-description: Author a validation for a piece of data-science work as two co-located artifacts under outputs/ds-validation/<slug>/ — a <slug>_run.py that does the heavy computation once and dumps its results to disk, and a <slug>_validation.ipynb that loads those results and renders only the diagnostics the operator asked for. The split exists so the notebook always reruns promptly; iterating on the notebook never re-fits a model or re-processes a table. Before writing anything, check disk for the intermediates the notebook will consume — if they already exist (from a prior run or an operator-named path), skip the run script entirely. Assume the happy path: no defensive code, no try/except, no schema asserts. No assert statements unless the operator explicitly asks for one as a check. Use the minimum set of dependencies that satisfies the checks — do not reach for Spark if pandas works. Include only the diagnostics the operator asked for; if a check is ambiguous, ask before guessing. The agent verifies prereqs, writes the artifacts, executes the run script with basic progress logging, and hands the operator the notebook launch command on completion. Use only when the user explicitly invokes /ds-validation with a target and a checks list — never auto-invoke from ambient context.
+description: >-
+  Author a validation for a piece of data-science work as two co-located
+  artifacts under outputs/ds-validation/<slug>/ — a <slug>_run.py that does
+  the heavy computation once and dumps its results to disk, and a
+  <slug>_validation.ipynb that loads those results and renders only the
+  diagnostics the operator asked for. The split exists so the notebook always
+  reruns promptly; iterating on the notebook never re-fits a model or
+  re-processes a table. Before writing anything, check disk for the
+  intermediates the notebook will consume — if they already exist (from a
+  prior run or an operator-named path), skip the run script entirely. Assume
+  the happy path — no defensive code, no try/except, no schema asserts. No
+  assert statements unless the operator explicitly asks for one as a check.
+  Use the minimum set of dependencies that satisfies the checks — do not
+  reach for Spark if pandas works. Include only the diagnostics the operator
+  asked for; if a check is ambiguous, ask before guessing. The agent verifies
+  prereqs, writes the artifacts, executes the run script with basic progress
+  logging, and hands the operator the notebook launch command on completion.
+  Use only when the user explicitly invokes /ds-validation with a target and
+  a checks list — never auto-invoke from ambient context.
 ---
 
 # /ds-validation — a run script + an analysis notebook
