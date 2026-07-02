@@ -13,8 +13,9 @@ agent-configs/
 ├── CLAUDE.md               # one-line `@./AGENTS.md` shim for Claude Code's loader
 ├── setup.sh                # idempotent: symlinks rules + skills into ~/.claude and ~/.cursor
 ├── skills/                 # agent-neutral skills
-│   ├── build/SKILL.md      # /build — orchestrated, airgapped build pipeline
-│   └── compress/SKILL.md   # /compress — prune prose to the code's intelligible surface
+│   ├── build/SKILL.md          # /build — orchestrated, airgapped build pipeline
+│   ├── compress/SKILL.md       # /compress — prune prose to the code's intelligible surface
+│   └── ds-validation/SKILL.md  # /ds-validation — author a scientist's audit notebook
 └── README.md
 ```
 
@@ -62,6 +63,34 @@ Code semantics are never modified. Changes land on a `compress/<area>` branch as
 reviewable diff, salvaged "why we did it" narrative goes into the commit body (git as the
 cold store), and it runs a **single pass** — *you* review the branch and decide what to
 keep. See [`skills/compress/SKILL.md`](skills/compress/SKILL.md).
+
+### `/ds-validation`
+
+Authors a validation for a piece of data-science work — a fitted model, a data-prep
+output, a summary table — as up to **two co-located artifacts under
+`outputs/ds-validation/<slug>/`**: a `<slug>_run.py` that does the heavy computation
+once and dumps its results to disk (with minimal progress prints), and a
+`<slug>_validation.ipynb` that loads those results and renders only the diagnostics the
+operator asked for. The split exists so the notebook always reruns promptly — iterating
+on it never re-fits a model or re-processes a table. **The run script is optional**:
+if the intermediates the notebook needs are already on disk from a prior run, the agent
+skips writing it and points the notebook at the existing files.
+
+Three load-bearing rules the agent must follow: **assume the happy path** (no defensive
+guards, no `try/except`, no schema asserts, no `assert`s at all unless the operator
+explicitly asks for one as a check — a broken pipeline shows up as a traceback, which
+is the right signal); **minimum dependencies** (if pandas works, don't reach for Spark;
+every added import is one more thing the reviewer's box has to have installed); **ask
+before guessing** (unclear targets, unclear checks, unclear inputs, and unclear
+intermediate locations each get one focused question — never plausible-looking defaults
+or bonus diagnostics).
+
+Flow: the agent verifies prereqs (`jupyter`, every package both artifacts will import,
+project modules the run script calls), checks disk for existing intermediates, writes
+the run script only if needed, **executes it** and streams its progress prints, then
+writes the notebook and hands you the launch command on completion. Single pass; you
+edit the notebook or re-invoke `/ds-validation` with a delta to change checks. See
+[`skills/ds-validation/SKILL.md`](skills/ds-validation/SKILL.md).
 
 ## Deployment
 
