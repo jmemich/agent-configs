@@ -67,30 +67,25 @@ keep. See [`skills/compress/SKILL.md`](skills/compress/SKILL.md).
 ### `/ds-validation`
 
 Authors a validation for a piece of data-science work — a fitted model, a data-prep
-output, a summary table — as up to **two co-located artifacts under
-`outputs/ds-validation/<slug>/`**: a `<slug>_run.py` that does the heavy computation
-once and dumps its results to disk (with minimal progress prints), and a
-`<slug>_validation.ipynb` that loads those results and renders only the diagnostics the
-operator asked for. The split exists so the notebook always reruns promptly — iterating
-on it never re-fits a model or re-processes a table. **The run script is optional**:
-if the intermediates the notebook needs are already on disk from a prior run, the agent
-skips writing it and points the notebook at the existing files.
+output, a summary table — as a **single inline notebook** under
+`outputs/ds-validation/<slug>/<slug>_validation.ipynb`. Each validation section has
+two subsections: **Na** gets and transforms data (checking disk for existing artefacts
+*before* any long-running step), **Nb** runs the exit gate the operator asked for.
+Heavy compute lives in the notebook, not a separate run script — rerunning Nb stays
+fast because Na skips finished work when artefacts are already on disk.
 
-Three load-bearing rules the agent must follow: **assume the happy path** (no defensive
-guards, no `try/except`, no schema asserts, no `assert`s at all unless the operator
-explicitly asks for one as a check — a broken pipeline shows up as a traceback, which
-is the right signal); **minimum dependencies** (if pandas works, don't reach for Spark;
-every added import is one more thing the reviewer's box has to have installed); **ask
-before guessing** (unclear targets, unclear checks, unclear inputs, and unclear
-intermediate locations each get one focused question — never plausible-looking defaults
-or bonus diagnostics).
+Three load-bearing rules the agent must follow: **assume the happy path** (no
+`try/except`, no schema asserts, no `assert`s unless the operator explicitly asks for
+one as a check — the sole exception is `path.exists()` in Na-get cells, which is how
+the notebook avoids restarting finished compute); **minimum dependencies** (if pandas
+works, don't reach for Spark); **ask before guessing** (unclear targets, checks,
+inputs, artefact paths, and skip-if-present filenames each get one focused question).
 
-Flow: the agent verifies prereqs (`jupyter`, every package both artifacts will import,
-project modules the run script calls), checks disk for existing intermediates, writes
-the run script only if needed, **executes it** and streams its progress prints, then
-writes the notebook and hands you the launch command on completion. Single pass; you
-edit the notebook or re-invoke `/ds-validation` with a delta to change checks. See
-[`skills/ds-validation/SKILL.md`](skills/ds-validation/SKILL.md).
+Flow: the agent verifies prereqs (`jupyter`, every package the notebook will import,
+project modules it calls), inventories artefacts already on disk, writes the notebook,
+and hands you the launch command. You run Na once (or watch it skip), then iterate on
+Nb freely. Single pass; edit the notebook or re-invoke `/ds-validation` with a delta to
+change checks. See [`skills/ds-validation/SKILL.md`](skills/ds-validation/SKILL.md).
 
 ## Deployment
 
