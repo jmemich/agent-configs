@@ -4,96 +4,37 @@ Global collaboration rules. Per-project rules override these in per-repo
 AGENTS.md / CLAUDE.md.
 
 ## Who you're working with
-
-- 10+ years software dev; PhD economist (CMU, mechanism design).
-- Numerical computing focus (numpy, scipy, jupyter, LaTeX) alongside
-  product work (decks, docs, spreadsheets).
-- Domain expert directing the work, not a SWE auditing patterns. Skip
-  foundational explanations. Speak peer-to-peer.
+- 10+ years software dev. PhD economist (CMU, mechanism design)
+- Domain expert directing the work, not a SWE auditing patterns. Skip foundational explanations. Speak peer-to-peer.
 
 ## Pace
-
-- Agree on a plan before implementing. Deliberate beats rapid solo
-  execution.
-- User-gated iteration over autonomous loops: surface a verdict +
-  recommended fixes and let me re-invoke. Don't retry automatically.
-- Step through hard work together — especially profiling and
-  synthesis, where I'm building intuition.
-- Once preferences are clear, apply judgment. Don't re-ask menu
-  questions for sub-decisions; recommend with brief reasoning and
-  let me correct.
-- Watch for the anti-pattern I've named: "preference for action
-  before understanding." On synthesis/research tasks, build the index
-  before proposing downstream production loops. When tempted to
-  "prove the loop on one X," first check whether X is self-contained
-  in my work — usually it isn't.
+- Agree on a plan before implementing. 
+- Establish sufficient degree of shared context before engaging in autonomous execution loops
+- Step through big decisions to build intuition
 
 ## Recommending changes
+- Don't reinvent the wheel: if a proven readily-available solution exists, use it.
+- Acknowledge when working blind. 
+- Verify before asserting
+- Be precise; don't overstate risks
 
-- Structure: problem → cost (install, learning curve, fresh-machine
-  bootstrap) → alternative including "do nothing" → recommendation.
-  Don't bury the alternative.
-- Don't lead with "everyone uses this" or "modern standard." I want
-  the *why*.
-- Hear from you first before I share my own thinking.
-- Acknowledge when working blind. If you haven't seen the source
-  material, say so rather than producing confident recommendations
-  from thin air.
-- Pressure-test your own claims. Verify before asserting. Be precise;
-  don't overstate risks.
+## Software Engineering & Data Science craft
+- When working on keep a scratch-pad of decisions to audit when needed. Simple .md file in /tmp is sufficient. Treat this like a minimal per-session changelog.
+- In numerical/math work, fidelity to the formal spec wins over performance or aesthetics.
+- When optimizining, simple performance wins first: vectorization, removing redundant work, persistent state — exhaust these before reaching for multiprocessing, JIT, or C extensions.
+- For all analytical work (reporting, modeling, graphing) assume the happy path: no defensive programming
 
-## Craft
-
-- **Minimalism + portability.** Justify every new tool or dep against
-  the cost of installing it on a fresh box, container, or remote
-  server. Default to NO on optional features unless the workflow win
-  is clear.
-- **Correctness over elegance.** In numerical/math work, fidelity to
-  the formal spec wins over performance or aesthetics. When
-  replicating historical output, flag suspected bugs rather than
-  silently matching.
-- **Simple perf wins first.** Better algorithms, vectorization,
-  removing redundant work, persistent state — exhaust these before
-  reaching for multiprocessing, JIT, or C extensions. Keep a written
-  perf backlog file rather than fix-on-the-spot.
-- **Markdown for non-trivial math.** Standalone `docs/` reference doc
-  with equations and symbol tables, cited back to canonical sources.
-  Docstrings are for one-liners.
+## Writing Style 
+- Don't use mannered prose
+- Don't use udeas/concepts as subjects
 
 ## External services & rate limits
-
 - **Respect API rate limits; never tight-loop poll.** The GitHub REST
   API allows only **60 requests/hour** unauthenticated (per IP) vs
   **5,000/hour** authenticated. Use the `gh` CLI or a token so calls
   count against the higher limit, and space out polling — back off on
   an interval, don't busy-wait. A loop that re-hits an endpoint every
   few seconds will exhaust 60/hr in minutes.
-
-## Mutual intelligibility (write for the human cache)
-
-The on-disk artifact is a cache of *human* understanding; code is the
-source of truth behind it. Optimize the surface a human must hold — a
-stance to apply at every step, not a rule to check.
-
-- **Code says it → prose doesn't repeat it.** Don't write a doc or
-  comment that restates what the code already states plainly.
-  Regenerable context is not worth caching.
-- **Prose earns its place only by holding what code can't** — the
-  *why*, external constraints, and synthesis a reader can't cheaply
-  reconstruct from the code. Everything else is prunable.
-- **Happy path by default.** Solve the expected case directly. Add
-  defensive branches, edge cases, and their tests only for failures
-  probable in *this* system, or when I ask — not for what merely
-  *could* go wrong.
-- **Discovery goes to the commit.** Keep the path-not-taken —
-  alternatives weighed, history, "we tried X" — out of comments and
-  reference docs. Co-locate it with the work in the commit message.
-- **Scope over size; route over accrete.** Keep each doc to a single
-  purpose a reader can hold at once. When a doc outgrows its purpose,
-  split and link it from an index rather than letting it sprawl.
-- **Prune as you pass.** When prose you touch is stale or redundant
-  against the code, cut it then. Deleting dead prose is a
-  contribution, not a risk.
 
 ## Repo hygiene
 
@@ -110,11 +51,3 @@ stance to apply at every step, not a rule to check.
 - **Before branching, ask what to do with any uncommitted or
   untracked work** on the source branch so it's preserved alongside
   the new branch.
-
-## Skill and config design (meta)
-
-- Slim and legible. Capture the load-bearing idea; cut ceremony.
-- Self-documenting names over clever ones.
-- Make side effects explicit.
-- Agent-neutral by default — plain markdown usable by both Claude
-  Code and Cursor; tool-specific glue stays thin.

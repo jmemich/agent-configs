@@ -1,23 +1,14 @@
 ---
 name: ds-validation
 description: >-
-  Author a validation for a piece of data-science work as a single
-  <slug>_validation.ipynb under outputs/ds-validation/<slug>/. Each validation
-  section has two subsections: Na gets and transforms data (checking disk for
-  existing artefacts before any long-running work), Nb runs the exit gate the
-  operator asked for. Assume the happy path — no try/except, no schema asserts.
-  The only path.exists() guard is in Na-get cells, so re-running validation
-  never restarts finished compute. No assert statements unless the operator
-  explicitly asks for one as a check. Use the minimum set of dependencies that
-  satisfies the checks — do not reach for Spark if pandas works. Include only
-  the diagnostics the operator asked for; if a check is ambiguous, ask before
-  guessing. The agent verifies prereqs, writes the notebook, and hands the
-  operator the launch command on completion. All notebook paths are absolute —
-  anchored at `REPO_ROOT` resolved at authoring time — so cells work regardless
-  of where `jupyter lab` was launched. Pre-existing upstream artefacts are read
-  in place; never copied into the validation folder. Use only when the user
-  explicitly invokes /ds-validation with a target and a checks list — never
-  auto-invoke from ambient context.
+  Author a single <slug>_validation.ipynb under outputs/ds-validation/<slug>/.
+  Na-get loads/transforms data (path.exists() skip-if-present only); Nb runs
+  exit-gate checks the operator requested. Happy path — no try/except, no schema
+  asserts, no assert unless asked; minimum deps (pandas before Spark). Verifies
+  prereqs, writes absolute paths from REPO_ROOT, reads upstream artefacts in
+  place. Ask before guessing ambiguous checks. Use only when the user explicitly
+  invokes /ds-validation with a target and checks list.
+disable-model-invocation: true
 ---
 
 # /ds-validation — one inline validation notebook

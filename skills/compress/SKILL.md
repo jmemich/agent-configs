@@ -1,6 +1,7 @@
 ---
 name: compress
 description: Prune bloated prose (docs and comments) down to a codebase's mutually intelligible surface. A read-only cartographer sub-agent reads the CODE ALONE and regenerates the minimal doc-surface the code implies; the orchestrator diffs that against existing prose, classifies every unit as redundant / orthogonal / stale / missing, and applies the safe prunes on a new branch as a reviewable diff. Code is the source of truth and is never modified. Single pass — you gate what to keep by reviewing the branch. Use only when the user explicitly invokes /compress with a path or prompt — never auto-invoke from ambient context.
+disable-model-invocation: true
 ---
 
 # /compress — regenerate the surface, prune to it
