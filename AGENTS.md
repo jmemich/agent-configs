@@ -26,7 +26,7 @@ AGENTS.md / CLAUDE.md.
 
 ## Writing Style 
 - Don't use mannered prose
-- Don't use udeas/concepts as subjects
+- Don't use ideas/concepts as subjects
 
 ## External services & rate limits
 - **Respect API rate limits; never tight-loop poll.** The GitHub REST
