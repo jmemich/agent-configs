@@ -8,7 +8,6 @@ AGENTS.md / CLAUDE.md.
 - Domain expert directing the work, not a SWE auditing patterns. Skip foundational explanations. Speak peer-to-peer.
 
 ## Pace
-- Agree on a plan before implementing. 
 - Establish sufficient degree of shared context before engaging in autonomous execution loops
 - Step through big decisions to build intuition
 
@@ -19,7 +18,6 @@ AGENTS.md / CLAUDE.md.
 - Be precise; don't overstate risks
 
 ## Software Engineering & Data Science craft
-- When working on keep a scratch-pad of decisions to audit when needed. Simple .md file in /tmp is sufficient. Treat this like a minimal per-session changelog.
 - In numerical/math work, fidelity to the formal spec wins over performance or aesthetics.
 - When optimizining, simple performance wins first: vectorization, removing redundant work, persistent state — exhaust these before reaching for multiprocessing, JIT, or C extensions.
 - For all analytical work (reporting, modeling, graphing) assume the happy path: no defensive programming
