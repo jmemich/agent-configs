@@ -19,7 +19,7 @@ AGENTS.md / CLAUDE.md.
 
 ## Software Engineering & Data Science craft
 - In numerical/math work, fidelity to the formal spec wins over performance or aesthetics.
-- When optimizining, simple performance wins first: vectorization, removing redundant work, persistent state — exhaust these before reaching for multiprocessing, JIT, or C extensions.
+- When optimizing, simple performance wins first: vectorization, removing redundant work, persistent state — exhaust these before reaching for multiprocessing, JIT, or C extensions.
 - For all analytical work (reporting, modeling, graphing) assume the happy path: no defensive programming
 
 ## Writing Style 
